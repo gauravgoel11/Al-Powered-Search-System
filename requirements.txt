@@ -13,3 +13,4 @@ openai
 google-generativeai
 google-ai-generativelanguage
 typing_extensions
+gunicorn
