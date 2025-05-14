@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Otomashen Search | Powered by CrewAI</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="static/css/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="app-container">
+        <header>
+            <div class="logo-container">
+                <!-- <div class="logo">
+                    <span class="primary">Otomashen</span><span class="secondary">Search</span>
+                </div> -->
+                <!-- <div class="tagline">Powered by CrewAI</div> -->
+            </div>
+            <nav>
+                <ul class="nav-tabs">
+                    <li class="active" data-search-type="all"><i class="fas fa-search"></i> All</li>
+                    <li data-search-type="movie"><i class="fas fa-film"></i> Movies</li>
+                    <li data-search-type="music"><i class="fas fa-music"></i> Music</li>
+                    <li data-search-type="news"><i class="fas fa-newspaper"></i> News</li>
+                    <li data-search-type="general"><i class="fas fa-globe"></i> Web</li>
+                </ul>
+            </nav>
+        </header>
+
+        <main>
+            <section class="search-section">
+                <div class="search-container">
+                    <div class="search-box">
+                        <input type="text" id="search-input" placeholder=" search">
+                        <button id="search-button">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                    <!-- <div class="search-hints">
+                        <p>Try: <span class="hint movie-hint">Action movies with Tom Cruise</span> <span
+                                class="hint music-hint">Top songs by Taylor Swift</span> <span
+                                class="hint news-hint">Latest news on AI</span></p>
+                    </div> -->
+                </div>
+            </section>
+
+            <section class="results-section">
+                <div class="loader-container hidden">
+                    <div class="loader">
+                        <div class="agent-icon">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <div class="agent-message">
+                            <span class="agent-role">Movie Specialist</span> is searching...
+                        </div>
+                        <div class="pulse-circle"></div>
+                    </div>
+                </div>
+
+                <div class="results-container hidden">
+                    <div class="results-header">
+                        <h2>Results</h2>
+                        <div class="search-metadata">
+                            <span class="search-type"><i class="fas fa-film"></i> Movie Search</span>
+                            <span class="search-time">Completed in <span id="search-duration">2.3</span> seconds</span>
+                        </div>
+                    </div>
+
+                    <div id="results-content">
+                        <!-- Results will be displayed here -->
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Error notification template -->
+    <div class="notification error hidden" id="error-notification">
+        <div class="notification-icon">
+            <i class="fas fa-exclamation-circle"></i>
+        </div>
+        <div class="notification-content">
+            <h3>Error</h3>
+            <p id="error-message">Something went wrong with your search.</p>
+        </div>
+        <button class="notification-close">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.3.0/marked.min.js"></script>
+    <script src="static/js/main.js"></script>
+</body>
+
+</html>

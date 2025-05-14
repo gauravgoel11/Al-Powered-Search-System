@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Universal Search Hub</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --secondary: #4f46e5;
+            --light: #f9fafb;
+            --dark: #1e293b;
+            --movie: #ef4444;
+            --music: #8b5cf6;
+            --news: #10b981;
+            --general: #6b7280;
+            --card-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --transition: all 0.3s ease;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: #f8fafc;
+            color: var(--dark);
+            overflow-x: hidden;
+        }
+
+        .app-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        .search-header {
+            text-align: center;
+            padding: 3rem 1rem;
+            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+            color: white;
+            border-radius: 0 0 1.5rem 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--card-shadow);
+        }
+
+        .search-header h1 {
+            font-weight: 800;
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.025em;
+        }
+
+        .search-header p {
+            font-size: 1.125rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .search-box-container {
+            max-width: 800px;
+            margin: -3.5rem auto 2rem;
+            position: relative;
+            z-index: 10;
+        }
+
+        .search-box {
+            background-color: white;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            box-shadow: var(--card-shadow);
+        }
+
+        .search-input-group {
+            position: relative;
+        }
+
+        .search-input {
+            padding-left: 3rem !important;
+            height: 3.5rem;
+            font-size: 1.125rem;
+            border-radius: 0.75rem;
+            border: 2px solid #e5e7eb;
+            transition: var(--transition);
+        }
+
+        .search-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9ca3af;
+            font-size: 1.25rem;
+            z-index: 10;
+        }
+
+        .search-button {
+            height: 3.5rem;
+            border-radius: 0.75rem;
+            font-size: 1.125rem;
+            font-weight: 600;
+            background: var(--primary);
+            border: none;
+            transition: var(--transition);
+        }
+
+        .search-button:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+        }
+
+        .category-selector {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin: 1.5rem 0 1rem;
+        }
+
+        .category-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            font-size: 0.95rem;
+            color: #4b5563;
+            background-color: #f3f4f6;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .category-item:hover {
+            background-color: #e5e7eb;
+        }
+
+        .category-item.active {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .suggestions-container {
+            margin: 1.5rem 0;
+            text-align: center;
+        }
+
+        .suggestions-title {
+            font-size: 0.95rem;
+            color: #6b7280;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .suggestions-title i {
+            font-size: 0.85rem;
+        }
+
+        .suggestions-pills {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .suggestion-pill {
+            padding: 0.5rem 1rem;
+            border-radius: 9999px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            background-color: white;
+            border: 1px solid #e5e7eb;
+            color: #4b5563;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        }
+
+        .suggestion-pill:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .suggestion-pill.movie {
+            border-color: var(--movie);
+            color: var(--movie);
+        }
+
+        .suggestion-pill.music {
+            border-color: var(--music);
+            color: var(--music);
+        }
+
+        .suggestion-pill.news {
+            border-color: var(--news);
+            color: var(--news);
+        }
+
+        .suggestion-pill.general {
+            border-color: var(--general);
+            color: var(--general);
+        }
+
+        .loader-container {
+            display: none;
+            text-align: center;
+            padding: 3rem 0;
+        }
+
+        .loader {
+            display: inline-block;
+            position: relative;
+            width: 80px;
+            height: 80px;
+        }
+
+        .loader div {
+            position: absolute;
+            top: 33px;
+            width: 13px;
+            height: 13px;
+            border-radius: 50%;
+            background: var(--primary);
+            animation-timing-function: cubic-bezier(0, 1, 1, 0);
+        }
+
+        .loader div:nth-child(1) {
+            left: 8px;
+            animation: loader1 0.6s infinite;
+        }
+
+        .loader div:nth-child(2) {
+            left: 8px;
+            animation: loader2 0.6s infinite;
+        }
+
+        .loader div:nth-child(3) {
+            left: 32px;
+            animation: loader2 0.6s infinite;
+        }
+
+        .loader div:nth-child(4) {
+            left: 56px;
+            animation: loader3 0.6s infinite;
+        }
+
+        @keyframes loader1 {
+            0% { transform: scale(0); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes loader2 {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(24px, 0); }
+        }
+
+        @keyframes loader3 {
+            0% { transform: scale(1); }
+            100% { transform: scale(0); }
+        }
+
+        .loader-text {
+            margin-top: 1rem;
+            font-weight: 500;
+            color: #6b7280;
+        }
+
+        .results-container {
+            padding: 1rem 0 3rem;
+            display: none;
+        }
+
+        .results-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .results-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .result-type-pill {
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            color: white;
+        }
+
+        .result-type-pill.movie {
+            background-color: var(--movie);
+        }
+
+        .result-type-pill.music {
+            background-color: var(--music);
+        }
+
+        .result-type-pill.news {
+            background-color: var(--news);
+        }
+
+        .result-type-pill.general {
+            background-color: var(--general);
+        }
+
+        .results-stats {
+            font-size: 0.95rem;
+            color: #6b7280;
+        }
+
+        .nav-tabs {
+            border-bottom: 1px solid #e5e7eb;
+            margin-bottom: 1.5rem;
+        }
+
+        .nav-tabs .nav-link {
+            color: #6b7280;
+            font-weight: 500;
+            padding: 0.75rem 1rem;
+            border: none;
+            border-bottom: 3px solid transparent;
+            transition: var(--transition);
+        }
+
+        .nav-tabs .nav-link:hover {
+            color: var(--dark);
+            border-bottom-color: #e5e7eb;
+        }
+
+        .nav-tabs .nav-link.active {
+            color: var(--primary);
+            background-color: transparent;
+            border-bottom-color: var(--primary);
+        }
+
+        .movie-grid, .music-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .movie-card, .music-card {
+            background-color: white;
+            border-radius: 0.75rem;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            transition: var(--transition);
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .movie-card:hover, .music-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        .movie-image, .music-image {
+            height: 380px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .movie-image img, .music-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .movie-card:hover .movie-image img, .music-card:hover .music-image img {
+            transform: scale(1.05);
+        }
+
+        .movie-rating {
+            position: absolute;
+            top: 0.75rem;
+            right: 0.75rem;
+            background-color: rgba(0, 0, 0, 0.75);
+            color: white;
+            font-weight: 600;
+            padding: 0.35rem 0.75rem;
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .movie-rating i {
+            color: #fbbf24;
+        }
+
+        .movie-content, .music-content {
+            padding: 1.25rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .movie-title, .music-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+            line-height: 1.4;
+        }
+
+        .movie-year, .music-artist {
+            color: #6b7280;
+            font-size: 0.95rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .movie-genre, .music-genre {
+            display: inline-block;
+            font-size: 0.75rem;
+            font-weight: 500;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            background-color: #f3f4f6;
+            margin-bottom: 0.75rem;
+        }
+
+        .movie-info, .music-info {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.75rem;
+            font-size: 0.9rem;
+            color: #4b5563;
+        }
+
+        .movie-info i, .music-info i {
+            width: 1.25rem;
+            margin-right: 0.5rem;
+            color: #6b7280;
+        }
+
+        .movie-description, .music-description {
+            font-size: 0.95rem;
+            line-height: 1.5;
+            color: #4b5563;
+            margin-bottom: 1.25rem;
+            flex-grow: 1;
+        }
+
+        .movie-link, .music-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background-color: var(--primary);
+            color: white;
+            font-weight: 500;
+            font-size: 0.95rem;
+            border-radius: 0.5rem;
+            margin-top: auto;
+            transition: var(--transition);
+            text-decoration: none;
+        }
+
+        .movie-link:hover, .music-link:hover {
+            background-color: var(--secondary);
+            color: white;
+        }
+
+        .music-player {
+            width: 100%;
+            margin: 0.75rem 0;
+        }
+
+        .news-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .news-card {
+            background-color: white;
+            border-radius: 0.75rem;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            border-left: 4px solid var(--news);
+        }
+
+        .news-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        .news-content {
+            padding: 1.5rem;
+        }
+
+        .news-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            line-height: 1.4;
+        }
+
+        .news-source {
+            font-size: 0.85rem;
+            color: #6b7280;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .news-date {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .news-summary {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: #4b5563;
+            margin-bottom: 1.25rem;
+        }
+
+        .news-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background-color: white;
+            color: var(--news);
+            font-weight: 500;
+            font-size: 0.95rem;
+            border-radius: 0.5rem;
+            border: 1px solid var(--news);
+            transition: var(--transition);
+            text-decoration: none;
+        }
+
+        .news-link:hover {
+            background-color: var(--news);
+            color: white;
+        }
+
+        .general-result {
+            background-color: white;
+            border-radius: 0.75rem;
+            padding: 2rem;
+            box-shadow: var(--card-shadow);
+        }
+
+        .general-content {
+            font-size: 1rem;
+            line-height: 1.7;
+            color: #4b5563;
+        }
+
+        .general-content h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin: 1.5rem 0 0.75rem;
+            color: var(--dark);
+        }
+
+        .general-content a {
+            color: var(--primary);
+            text-decoration: underline;
+            text-decoration-thickness: 1px;
+            text-underline-offset: 2px;
+            transition: var(--transition);
+        }
+
+        .general-content a:hover {
+            color: var(--secondary);
+        }
+
+        .error-container {
+            background-color: white;
+            border-radius: 0.75rem;
+            padding: 2rem;
+            text-align: center;
+            box-shadow: var(--card-shadow);
+            margin: 2rem 0;
+            display: none;
+        }
+
+        .error-icon {
+            font-size: 3rem;
+            color: #ef4444;
+            margin-bottom: 1rem;
+        }
+
+        .error-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            color: var(--dark);
+        }
+
+        .error-message {
+            font-size: 1rem;
+            color: #6b7280;
+            max-width: 500px;
+            margin: 0 auto 1.5rem;
+        }
+
+        .retry-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            background-color: var(--primary);
+            color: white;
+            font-weight: 500;
+            font-size: 1rem;
+            border-radius: 0.5rem;
+            transition: var(--transition);
+            text-decoration: none;
+            border: none;
+        }
+
+        .retry-button:hover {
+            background-color: var(--secondary);
+            transform: translateY(-2px);
+        }
+
+        .footer {
+            background-color: white;
+            padding: 2rem 0;
+            text-align: center;
+            margin-top: 3rem;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .footer-text {
+            font-size: 0.95rem;
+            color: #6b7280;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .search-header {
+                padding: 2rem 1rem;
+                border-radius: 0 0 1rem 1rem;
+            }
+
+            .search-header h1 {
+                font-size: 2rem;
+            }
+
+            .search-box-container {
+                margin-top: -2.5rem;
+            }
+
+            .search-box {
+                padding: 1rem;
+            }
+
+            .search-input {
+                height: 3rem;
+                font-size: 1rem;
+            }
+
+            .search-button {
+                height: 3rem;
+                font-size: 1rem;
+            }
+
+            .category-selector {
+                overflow-x: auto;
+                justify-content: flex-start;
+                padding-bottom: 0.5rem;
+            }
+
+            .movie-grid, .music-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+                gap: 1rem;
+            }
+
+            .movie-image, .music-image {
+                height: 320px;
+            }
+
+            .movie-content, .music-content {
+                padding: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .movie-grid, .music-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .search-header h1 {
+                font-size: 1.75rem;
+            }
+
+            .nav-tabs .nav-link {
+                padding: 0.5rem 0.75rem;
+                font-size: 0.95rem;
+            }
+        }
+
+        /* Dark mode */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --light: #1e293b;
+                --dark: #f9fafb;
+            }
+
+            body {
+                background-color: #0f172a;
+                color: #f9fafb;
+            }
+
+            .search-box, .movie-card, .music-card, .news-card, .general-result, .error-container {
+                background-color: #1e293b;
+                border-color: #334155;
+            }
+
+            .search-input {
+                background-color: #1e293b;
+                border-color: #334155;
+                color: #f9fafb;
+            }
+
+            .search-input:focus {
+                border-color: var(--primary);
+            }
+
+            .category-item {
+                background-color: #334155;
+                color: #e2e8f0;
+            }
+
+            .category-item:hover {
+                background-color: #475569;
+            }
+
+            .suggestion-pill {
+                background-color: #1e293b;
+                border-color: #334155;
+                color: #e2e8f0;
+            }
+
+            .movie-genre, .music-genre {
+                background-color: #334155;
+                color: #e2e8f0;
+            }
+
+            .results-header {
+                border-bottom-color: #334155;
+            }
+
+            .nav-tabs {
+                border-bottom-color: #334155;
+            }
+
+            .nav-tabs .nav-link:hover {
+                border-bottom-color: #475569;
+                color: #f9fafb;
+            }
+
+            .footer {
+                background-color: #1e293b;
+                border-top-color: #334155;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <header class="search-header">
+            <h1>Universal Search Hub</h1>
+            <p>Find movies, music, news, and information from across the web in one place</p>
+        </header>
+
+        <div class="search-box-container">
+            <div class="search-box">
+                <form id="searchForm">
+                    <div class="input-group search-input-group">
+                        <span class="search-icon">
+                            <i class="fas fa-search"></i>
+                        </span>
+                        <input 
+                            type="text" 
+                            id="searchInput" 
+                            class="form-control search-input" 
+                            placeholder="What would you like to search for?" 
+                            aria-label="Search query"
+                            autocomplete="off"
+                        >
+                        <button class="btn btn-primary search-button" type="submit">
+                            Search
+                        </button>
+                    </div>
+                </form>
+
+                <div class="category-selector">
+                    <div class="category-item active" data-type="all">
+                        <i class="fas fa-globe"></i>
+                        <span>All</span>
+                    </div>
+                    <div class="category-item" data-type="movie">
+                        <i class="fas fa-film"></i>
+                        <span>Movies</span>
+                    </div>
+                    <div class="category-item" data-type="music">
+                        <i class="fas fa-music"></i>
+                        <span>Music</span>
+                    </div>
+                    <div class="category-item" data-type="news">
+                        <i class="fas fa-newspaper"></i>
+                        <span>News</span>
+                    </div>
+                    <div class="category-item" data-type="general">
+                        <i class="fas fa-info-circle"></i>
+                        <span>General</span>
+                    </div>
+                </div>
+
+                <div class="suggestions-container">
+                    <div class="suggestions-title">
+                        <i class="fas fa-lightbulb"></i>
+                        <span>Try these popular searches</span>
+                    </div>
+                    <div class="suggestions-pills">
+                        <div class="suggestion-pill movie" data-query="Show me top action movies above 8 rating">
+                            <i class="fas fa-film"></i> Top action movies
+                        </div>
+                        <div class="suggestion-pill movie" data-query="Find the best Tom Hanks movies">
+                            <i class="fas fa-film"></i> Tom Hanks movies
+                        </div>
+                        <div class="suggestion-pill music" data-query="Best songs by Taylor Swift">
+                            <i class="fas fa-music"></i> Taylor Swift songs
+                        </div>
+                        <div class="suggestion-pill music" data-query="Top 5 Punjabi songs">
+                            <i class="fas fa-music"></i> Punjabi songs
+                        </div>
+                        <div class="suggestion-pill news" data-query="Latest news about artificial intelligence">
+                            <i class="fas fa-newspaper"></i> AI news
+                        </div>
+                        <div class="suggestion-pill general" data-query="What is quantum computing?">
+                            <i class="fas fa-info-circle"></i> Quantum computing
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="loader-container" id="loaderContainer">
+            <div class="loader">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+            <p class="loader-text">Searching across multiple sources...</p>
+        </div>
+
+        <div class="error-container" id="errorContainer">
+            <div class="error-icon">
+                <i class="fas fa-exclamation-circle"></i>
+            </div>
+            <h3 class="error-title">Oops! Something went wrong</h3>
+            <p class="error-message" id="errorMessage">We had trouble processing your request. Please try again.</p>
+            <button class="retry-button" id="retryButton">
+                <i class="fas fa-redo"></i> Try Again
+            </button>
+        </div>
+
+        <div class="results-container" id="resultsContainer">
+            <div class="results-header">
+                <h2 class="results-title">
+                    <span id="resultTypeIndicator" class="result-type-pill general">ALL</span>
+                    <span id="resultTitle">Search Results</span>
+                </h2>
+                <div class="results-stats" id="resultsStats"></div>
+            </div>
+
+            <ul class="nav nav-tabs" id="resultTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="all-tab" data-bs-toggle="tab" data-bs-target="#all-results" type="button" role="tab" aria-controls="all-results" aria-selected="true">
+                        <i class="fas fa-th-large"></i> All Results
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="movies-tab" data-bs-toggle="tab" data-bs-target="#movies-results" type="button" role="tab" aria-controls="movies-results" aria-selected="false">
+                        <i class="fas fa-film"></i> Movies
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="music-tab" data-bs-toggle="tab" data-bs-target="#music-results" type="button" role="tab" aria-controls="music-results" aria-selected="false">
+                        <i class="fas fa-music"></i> Music
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="news-tab" data-bs-toggle="tab" data-bs-target="#news-results" type="button" role="tab" aria-controls="news-results" aria-selected="false">
+                        <i class="fas fa-newspaper"></i> News
+                    </button>
+                </li>
+            </ul>
+            
+            <div class="tab-content" id="resultTabsContent">
+                <div class="tab-pane fade show active" id="all-results" role="tabpanel" aria-labelledby="all-tab">
+                    <div id="allResultsContent"></div>
+                </div>
+                <div class="tab-pane fade" id="movies-results" role="tabpanel" aria-labelledby="movies-tab">
+                    <div class="movie-grid" id="movieResultsContent"></div>
+                </div>
+                <div class="tab-pane fade" id="music-results" role="tabpanel" aria-labelledby="music-tab">
+                    <div class="music-grid" id="musicResultsContent"></div>
+                </div>
+                <div class="tab-pane fade" id="news-results" role="tabpanel" aria-labelledby="news-tab">
+                    <div class="news-list" id="newsResultsContent"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <footer class="footer">
+        <p class="footer-text">© 2025 Universal Search Hub

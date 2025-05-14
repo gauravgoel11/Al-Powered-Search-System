@@ -1,0 +1,14 @@
+Flask
+crewai
+huggingface_hub
+langchain
+langchain-google-genai
+langchain-openai
+langchain-together
+pydantic
+python-dotenv
+requests
+tenacity
+openai
+google-generativeai
+typing
